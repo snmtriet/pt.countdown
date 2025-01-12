@@ -1,0 +1,81 @@
+@import url('../src/assets/styles/app.css');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #1a1c24;
+  font-family: Flama, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  @apply text-light;
+}
+
+:root {
+  --site-chat-width: calc(100vw - 4.375rem);
+  --site-sidebar-width: 280px;
+  --button-height: 36px;
+  --global-transition: 175ms cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  --mask-background-color: rgba(0, 0, 0, 0.5);
+  --mask-background-color-dark: rgba(0, 0, 0, 0.8);
+  --real-100vh: calc(var(--vh, 1vh) * 100);
+}
+
+@media (min-width: 576px) {
+  :root {
+    --site-chat-width: 280px;
+  }
+}
+
+@font-face {
+  font-family: Flama;
+  src: url(/fonts/FlamaBasic-Regular.woff2) format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Flama;
+  src: url(/fonts/Flama-Medium.woff2) format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Flama;
+  src: url(/fonts/FlamaSemibold-Regular.woff2) format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Flama-Medium;
+  src: url(/fonts/FlamaMedium-Regular.ttf) format('truetype')
+    url(/fonts/FlamaMedium-Regular.woff2) format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+30-39;
+}
+
+@font-face {
+  font-family: Flama-Condensed;
+  src: url(/fonts/FlamaCondensedBold-Regular.woff2) format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Flama-Bold;
+  src: url(/fonts/Flama-Bold.otf);
+  font-weight: 800;
+}
