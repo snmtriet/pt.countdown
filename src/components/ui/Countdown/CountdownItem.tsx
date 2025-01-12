@@ -179,7 +179,7 @@ const CountdownItem = (props: Props) => {
     <div
       className={cn(
         'relative w-full rounded border-2 border-transparent bg-dark-4 p-2 shadow-xl',
-        countdown && countdown < 10 && 'border-yellow-2',
+        countdown && countdown <= 10 && 'border-yellow-2',
       )}
     >
       <img src="/img/daquy.png" className="absolute -left-2 -top-5 w-40" />
