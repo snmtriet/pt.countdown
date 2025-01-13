@@ -10,7 +10,7 @@ export interface CountdownItem {
   id: string
   minutes: number
   seconds: number
-  label?: string
+  label: string
   nextAlarmTime: Date | null
   countdown: number | null
   isMuted: boolean
@@ -21,7 +21,11 @@ const CountdownList = () => {
 
   const handleChangeMinutes = useCallback((id: string, minutes: number) => {
     setList((prevList) =>
-      prevList.map((item) => (item.id === id ? { ...item, minutes } : item)),
+      prevList.map((item) =>
+        item.id === id
+          ? { ...item, minutes, label: item.label.slice(0, -1) + minutes }
+          : item,
+      ),
     )
   }, [])
 
@@ -37,11 +41,6 @@ const CountdownList = () => {
     if (minutes > 9) {
       minutes = Number(minutes.toString().split('')[1])
     }
-    const label = prompt('Nhập tên của bộ đếm')
-    if (!label) {
-      alert('Vui lòng nhập tên bộ đếm')
-      return
-    }
 
     setList((prevList) => [
       ...prevList,
@@ -51,7 +50,7 @@ const CountdownList = () => {
         seconds,
         nextAlarmTime: null,
         countdown: null,
-        label: label,
+        label: `Map phút thứ ${minutes}`,
         isMuted: false,
       },
     ])
@@ -94,18 +93,17 @@ const CountdownList = () => {
   return (
     <>
       <button
-        className="mt-2 rounded bg-green-3 p-1 transition-colors ease-out hover:bg-green-2"
+        className="bg-purple-3 mt-2 rounded p-1 transition-colors ease-out hover:bg-purple-1"
         onClick={handleAddItem}
       >
         <FaPlus />
       </button>
       {list && list.length > 0 ? (
         <div className="mt-2 flex w-full flex-col gap-md md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xxl:grid-cols-5 xxxl:grid-cols-6">
-          {list.map((item, index) => (
+          {list.map((item) => (
             <CountdownItem
               key={item.id}
               item={item}
-              index={index}
               handleChangeMinutes={handleChangeMinutes}
               handleChangeSeconds={handleChangeSeconds}
               handleDeleteItem={handleDeleteItem}

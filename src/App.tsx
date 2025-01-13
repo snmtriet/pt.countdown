@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import CountdownList from './components/ui/Countdown'
 import './index.css'
+import { Text } from './components/shared'
 
 const App = () => {
   const [currentTime, setCurrentTime] = useState<Date>(new Date())
@@ -40,9 +41,9 @@ const App = () => {
           objectPosition: 'top center',
         }}
       ></img>
-      <div className="fixed left-0 top-0 z-10 h-full min-h-screen w-full bg-black opacity-70"></div>
-      <div className="absolute top-0 z-20 flex w-full flex-col items-center gap-md p-1">
-        <div className="current-time py-2">
+      <div className="fixed left-0 top-0 z-10 h-full min-h-screen w-full bg-black/70"></div>
+      <div className="absolute top-0 z-20 flex w-full flex-col items-center gap-md p-1 pb-12">
+        <div className="py-2">
           <h2 className="text-6xl">
             {currentTime.toLocaleTimeString('en-US', {
               hour: '2-digit',
@@ -53,6 +54,12 @@ const App = () => {
           </h2>
         </div>
         <CountdownList />
+      </div>
+      <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 bg-dark-3 py-2 text-center">
+        <Text className="whitespace-nowrap text-xs opacity-60">
+          © {new Date().getFullYear()} Su Nguyen Minh Triet. All Rights
+          Reserved.
+        </Text>
       </div>
     </div>
   )

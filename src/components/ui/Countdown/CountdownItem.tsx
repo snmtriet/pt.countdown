@@ -1,15 +1,30 @@
 import { Text } from '@/components/shared'
+import {
+  cn,
+  playSounds,
+  sound1,
+  sound10,
+  sound2,
+  sound3,
+  sound4,
+  sound5,
+  sound6,
+  sound7,
+  sound8,
+  sound9,
+  soundCardAppear,
+  soundRemainOneMinute,
+  soundRemainThirtySecond,
+  soundRemainTwoMinute,
+} from '@/utils'
+import { memo, useEffect, useState } from 'react'
 import { AiOutlineDelete } from 'react-icons/ai'
-import SelectCountdown from './SelectCountdown'
-import { CountdownItem as ICountdownItem } from './CountdownList'
-import { memo, useEffect } from 'react'
-import { Howl } from 'howler'
-import { cn } from '@/utils'
 import { GoMute, GoUnmute } from 'react-icons/go'
+import { CountdownItem as ICountdownItem } from './CountdownList'
+import SelectCountdown from './SelectCountdown'
 
 type Props = {
   item: ICountdownItem
-  index: number
   handleDeleteItem: (id: string) => void
   handleChangeMinutes: (id: string, minutes: number) => void
   handleChangeSeconds: (id: string, seconds: number) => void
@@ -18,61 +33,9 @@ type Props = {
   handleToggleSound: (id: string) => void
 }
 
-const sound10 = new Howl({
-  src: ['/sounds/10.mp3'],
-})
-
-const sound9 = new Howl({
-  src: ['/sounds/9.mp3'],
-})
-
-const sound8 = new Howl({
-  src: ['/sounds/8.mp3'],
-})
-
-const sound7 = new Howl({
-  src: ['/sounds/7.mp3'],
-})
-
-const sound6 = new Howl({
-  src: ['/sounds/6.mp3'],
-})
-
-const sound5 = new Howl({
-  src: ['/sounds/5.mp3'],
-})
-
-const sound4 = new Howl({
-  src: ['/sounds/4.mp3'],
-})
-
-const sound3 = new Howl({
-  src: ['/sounds/3.mp3'],
-})
-
-const sound2 = new Howl({
-  src: ['/sounds/2.mp3'],
-})
-
-const sound1 = new Howl({
-  src: ['/sounds/1.mp3'],
-})
-
-const soundRemainOneMinute = new Howl({
-  src: ['/sounds/remain-one-minute.mp3'],
-})
-const soundRemainTwoMinute = new Howl({
-  src: ['/sounds/remain-two-minute.mp3'],
-})
-
-const soundCardAppear = new Howl({
-  src: ['/sounds/card-appear.mp3'],
-})
-
 const CountdownItem = (props: Props) => {
   const {
     item,
-    index,
     handleDeleteItem,
     handleChangeMinutes,
     handleChangeSeconds,
@@ -80,7 +43,7 @@ const CountdownItem = (props: Props) => {
     handleChangeCountdown,
     handleToggleSound,
   } = props
-
+  const [isSpeaking, setIsSpeaking] = useState(false)
   const { minutes, seconds, nextAlarmTime, id, countdown, label, isMuted } =
     item
 
@@ -138,10 +101,16 @@ const CountdownItem = (props: Props) => {
 
     switch (countdown) {
       case 120:
-        soundRemainTwoMinute.play()
+        playSounds(minutes, soundRemainTwoMinute)
+        handleSpeak()
         break
       case 60:
-        soundRemainOneMinute.play()
+        playSounds(minutes, soundRemainOneMinute)
+        handleSpeak()
+        break
+      case 30:
+        playSounds(minutes, soundRemainThirtySecond)
+        handleSpeak()
         break
       case 10:
         sound10.play()
@@ -177,29 +146,34 @@ const CountdownItem = (props: Props) => {
         }, 500)
         break
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countdown, isMuted])
+
+  const handleSpeak = async () => {
+    setIsSpeaking(true)
+    await new Promise((resolve) => setTimeout(resolve, 3000))
+    setIsSpeaking(false)
+  }
 
   return (
     <div
       className={cn(
         'relative w-full rounded border-2 border-transparent bg-dark-4 p-2 shadow-xl',
-        countdown && countdown <= 10 && 'border-yellow-2',
+        {
+          'border-yellow-2': (countdown && countdown <= 10) || isSpeaking,
+        },
       )}
     >
-      <button
-        className="absolute bottom-2 right-2 rounded-full border bg-dark-4 p-1"
-        onClick={() => handleToggleSound(id)}
-      >
-        {item.isMuted ? <GoMute color="white" /> : <GoUnmute color="white" />}
-      </button>
-      <img src="/img/daquy.png" className="absolute -left-2 -top-5 w-40" />
-      <img src="/img/mamnon.png" className="absolute -top-5 left-5 w-40" />
+      <div className="absolute -left-2 -top-5 flex items-center">
+        <img src="/img/daquy.png" className="w-40" />
+        <img src="/img/mamnon.png" className="-ml-2 w-40" />
+      </div>
       <div className="relative mb-1 flex w-full items-center justify-between">
-        <Text className="text-lg text-green-2" bold>
-          {label || `Bộ đếm ${index + 1}`}
+        <Text className="text-green-4 text-lg" bold>
+          {label}
         </Text>
         <button
-          className="absolute right-0 top-0 rounded-full bg-red-500 p-1"
+          className="absolute right-0 top-0 rounded-full bg-red-2 p-1"
           onClick={() => handleDeleteItem(id)}
         >
           <AiOutlineDelete color="white" />
@@ -219,9 +193,9 @@ const CountdownItem = (props: Props) => {
           label="Giây:"
         />
       </div>
-      <div className="flex items-center justify-between">
+      <div className="mt-2 flex items-center justify-between">
         {nextAlarmTime && (
-          <div className="mt-2 w-full text-center">
+          <div className="w-full text-center">
             <h2 className="w-fit text-3xl">
               {new Date(nextAlarmTime).toLocaleTimeString('en-US', {
                 hour: '2-digit',
@@ -237,6 +211,16 @@ const CountdownItem = (props: Props) => {
             </h2>
           </div>
         )}
+        <button
+          className="rounded-full border bg-dark-4 p-1"
+          onClick={() => handleToggleSound(id)}
+        >
+          {item.isMuted ? (
+            <GoMute color="white" size={26} />
+          ) : (
+            <GoUnmute color="white" size={26} />
+          )}
+        </button>
       </div>
     </div>
   )
