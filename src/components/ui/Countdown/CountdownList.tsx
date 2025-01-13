@@ -13,6 +13,7 @@ export interface CountdownItem {
   label?: string
   nextAlarmTime: Date | null
   countdown: number | null
+  isMuted: boolean
 }
 
 const CountdownList = () => {
@@ -51,6 +52,7 @@ const CountdownList = () => {
         nextAlarmTime: null,
         countdown: null,
         label: label,
+        isMuted: false,
       },
     ])
   }, [])
@@ -81,6 +83,14 @@ const CountdownList = () => {
     [],
   )
 
+  const handleToggleSound = useCallback((id: string) => {
+    setList((prevList) =>
+      prevList.map((item) =>
+        item.id === id ? { ...item, isMuted: !item.isMuted } : item,
+      ),
+    )
+  }, [])
+
   return (
     <>
       <button
@@ -101,6 +111,7 @@ const CountdownList = () => {
               handleDeleteItem={handleDeleteItem}
               handleChangeNextAlarmTime={handleChangeNextAlarmTime}
               handleChangeCountdown={handleChangeCountdown}
+              handleToggleSound={handleToggleSound}
             />
           ))}
         </div>

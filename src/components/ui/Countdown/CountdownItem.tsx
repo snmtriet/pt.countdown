@@ -5,6 +5,7 @@ import { CountdownItem as ICountdownItem } from './CountdownList'
 import { memo, useEffect } from 'react'
 import { Howl } from 'howler'
 import { cn } from '@/utils'
+import { GoMute, GoUnmute } from 'react-icons/go'
 
 type Props = {
   item: ICountdownItem
@@ -14,6 +15,7 @@ type Props = {
   handleChangeSeconds: (id: string, seconds: number) => void
   handleChangeNextAlarmTime: (id: string, nextAlarmTime: Date | null) => void
   handleChangeCountdown: (id: string, countdown: number | null) => void
+  handleToggleSound: (id: string) => void
 }
 
 const sound10 = new Howl({
@@ -76,9 +78,11 @@ const CountdownItem = (props: Props) => {
     handleChangeSeconds,
     handleChangeNextAlarmTime,
     handleChangeCountdown,
+    handleToggleSound,
   } = props
 
-  const { minutes, seconds, nextAlarmTime, id, countdown, label } = item
+  const { minutes, seconds, nextAlarmTime, id, countdown, label, isMuted } =
+    item
 
   useEffect(() => {
     if (minutes >= 0 && seconds >= 0) {
@@ -130,7 +134,7 @@ const CountdownItem = (props: Props) => {
   }, [nextAlarmTime, id])
 
   useEffect(() => {
-    if (!countdown) return
+    if (!countdown || isMuted) return
 
     switch (countdown) {
       case 120:
@@ -173,7 +177,7 @@ const CountdownItem = (props: Props) => {
         }, 500)
         break
     }
-  }, [countdown])
+  }, [countdown, isMuted])
 
   return (
     <div
@@ -182,6 +186,12 @@ const CountdownItem = (props: Props) => {
         countdown && countdown < 10 && 'border-yellow-2',
       )}
     >
+      <button
+        className="absolute bottom-2 right-2 rounded-full border bg-dark-4 p-1"
+        onClick={() => handleToggleSound(id)}
+      >
+        {item.isMuted ? <GoMute color="white" /> : <GoUnmute color="white" />}
+      </button>
       <img src="/img/daquy.png" className="absolute -left-2 -top-5 w-40" />
       <img src="/img/mamnon.png" className="absolute -top-5 left-5 w-40" />
       <div className="relative mb-1 flex w-full items-center justify-between">
@@ -209,10 +219,10 @@ const CountdownItem = (props: Props) => {
           label="Giây:"
         />
       </div>
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-between">
         {nextAlarmTime && (
           <div className="mt-2 w-full text-center">
-            <h2 className="text-3xl">
+            <h2 className="w-fit text-3xl">
               {new Date(nextAlarmTime).toLocaleTimeString('en-US', {
                 hour: '2-digit',
                 minute: '2-digit',
